@@ -1,0 +1,27 @@
+.search-card, .results-card, .error-card {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 16px;
+  }
+  
+  .search-form {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 16px;
+  }
+  
+  mat-form-field {
+    flex: 1 1 200px;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  mat-progress-spinner {
+    position: absolute;
+    right: 10px;
+    top: 36px;
+  }  
