@@ -1,0 +1,105 @@
+<mat-card class="search-card">
+    <mat-toolbar color="primary">
+      Player Similarity Search
+    </mat-toolbar>
+  
+    <div class="search-form">
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Player Name</mat-label>
+        <input
+          matInput
+          [formControl]="playerCtrl"
+          [matAutocomplete]="auto"
+          placeholder="Start typing a name…"
+        />
+  
+        <mat-progress-spinner
+          *ngIf="loadingPlayers"
+          matSuffix
+          diameter="20"
+          mode="indeterminate"
+        ></mat-progress-spinner>
+  
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          [displayWith]="displayPlayer"
+          (optionSelected)="onPlayerSelected($event.option.value)"
+        >
+          <mat-option
+            *ngFor="let p of filteredPlayers$ | async"
+            [value]="p"
+          >
+            {{ p.nameFirst }} {{ p.nameLast }} ({{ p.player_id }})
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Year (optional)</mat-label>
+        <input
+          matInput
+          type="number"
+          [(ngModel)]="year" 
+          placeholder="1960"
+        />
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>K (neighbors)</mat-label>
+        <input
+          matInput
+          type="number"
+          [(ngModel)]="k"
+          min="1"
+          max="20"
+        />
+      </mat-form-field>
+  
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="search()"
+        [disabled]="!selectedPlayerID || loading"
+      >
+        {{ loading ? 'Searching…' : 'Search' }}
+      </button>
+  
+    </div>
+  </mat-card>
+  
+  <mat-card *ngIf="error" class="error-card">
+    <p>{{ error }}</p>
+  </mat-card>
+  
+  <mat-card *ngIf="results.length" class="results-card">
+    <table mat-table [dataSource]="results" class="mat-elevation-z1">
+  
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let r">
+          {{ r.nameFirst }} {{ r.nameLast }}
+        </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="player_id">
+        <th mat-header-cell *matHeaderCellDef> Player ID </th>
+        <td mat-cell *matCellDef="let r"> {{ r.player_id }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef> Year </th>
+        <td mat-cell *matCellDef="let r"> {{ r.year }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="distance">
+        <th mat-header-cell *matHeaderCellDef> Distance </th>
+        <td mat-cell *matCellDef="let r">
+          {{ r.distance | number:'1.3-3' }}
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row        *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card>  
